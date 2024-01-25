@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <time.h>
 
-#define SIZE 800
+#define SIZE 900
 
 typedef struct
 {
@@ -67,7 +67,12 @@ void update_pixels(pixel *pixels)
 	{
 		for (int y = 0; y != SIZE; ++y)
 		{
-			if (pixels[x + (y * SIZE)].type == WATER && !complete[x + (y * SIZE)])
+			if (pixels[x + (y * SIZE)].type == AIR && y - 1 > 1 && pixels[x + ((y - 1) * SIZE)].type == SAND && pixels[x + ((y + 1) * SIZE)].type != AIR)
+			{
+				pixels[x + (y * SIZE)].type = SAND;
+				pixels[x + ((y - 1) * SIZE)].type = AIR;
+			}
+			else if (pixels[x + (y * SIZE)].type == WATER && !complete[x + (y * SIZE)])
 			{
 				if (y + 1 < SIZE - 1)
 				{
@@ -118,7 +123,7 @@ void update_pixels(pixel *pixels)
 					}
 				}
 			}
-			if (pixels[x + (y * SIZE)].type == SAND && !complete[x + (y * SIZE)])
+			else if (pixels[x + (y * SIZE)].type == SAND && !complete[x + (y * SIZE)])
 			{
 				if (y + 3 < SIZE - 3)
 				{
