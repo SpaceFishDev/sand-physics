@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <time.h>
 
-#define SIZE 900
+#define SIZE 300
 
 typedef struct
 {
@@ -24,6 +24,7 @@ enum
 	AIR,
 	SAND,
 	WATER,
+	GLOWINGSTUFF
 };
 int randInRange(int min, int max)
 {
@@ -38,18 +39,95 @@ void draw_pixels(SDL_Renderer *renderer, pixel *pixels)
 	{
 		for (int y = 0; y < SIZE; ++y)
 		{
+			int r, g, b;
 			if (pixels[x + (y * SIZE)].type == AIR)
 			{
-				SDL_SetRenderDrawColor(renderer, 120, 180, 255, 255);
+				r = 120;
+				g = 180;
+				b = 255;
 			}
 			else if (pixels[x + (y * SIZE)].type == WATER)
 			{
-				SDL_SetRenderDrawColor(renderer, 10, 30, 255, 255);
+				r = 10;
+				g = 30;
+				b = 255;
+			}
+			else if (pixels[x + (y * SIZE)].type == GLOWINGSTUFF)
+			{
+				r = 250;
+				g = 250;
+				b = 140;
 			}
 			else
 			{
-				SDL_SetRenderDrawColor(renderer, 200, 130, 20, 255);
+				r = 150;
+				g = 80;
+				b = 0;
 			}
+			if (y >= 1 && pixels[x + (y * SIZE)].type != GLOWINGSTUFF && pixels[x + (y * SIZE)].type != AIR)
+			{
+				r += 120;
+				g += 120;
+				b += 120;
+				int start_y = y;
+				int i = start_y;
+				while (i >= 1 && i > (start_y - 15) && pixels[x + (i * SIZE)].type != GLOWINGSTUFF)
+				{
+					r -= 8;
+					g -= 8;
+					b -= 8;
+					--i;
+				}
+			}
+			if (y <= SIZE && pixels[x + (y * SIZE)].type != GLOWINGSTUFF && pixels[x + (y * SIZE)].type != AIR)
+			{
+				r += 120;
+				g += 120;
+				b += 120;
+				int start_y = y;
+				int i = start_y;
+				while (i <= SIZE && i < (start_y + 15) && pixels[x + (i * SIZE)].type != GLOWINGSTUFF)
+				{
+					r -= 8;
+					g -= 8;
+					b -= 8;
+					++i;
+				}
+			}
+			if (x <= SIZE && pixels[x + (y * SIZE)].type != GLOWINGSTUFF && pixels[x + (y * SIZE)].type != AIR)
+			{
+				r += 120;
+				g += 120;
+				b += 120;
+				int start_x = x;
+				int i = start_x;
+				while (i <= SIZE && i < (start_x + 15) && pixels[i + (y * SIZE)].type != GLOWINGSTUFF)
+				{
+					r -= 8;
+					g -= 8;
+					b -= 8;
+					++i;
+				}
+			}
+			if (x >= 1 && pixels[x + (y * SIZE)].type != GLOWINGSTUFF && pixels[x + (y * SIZE)].type != AIR)
+			{
+				r += 120;
+				g += 120;
+				b += 120;
+				int start_x = x;
+				int i = start_x;
+				while (i > 1 && i > (start_x - 15) && pixels[i + (y * SIZE)].type != GLOWINGSTUFF)
+				{
+					r -= 8;
+					g -= 8;
+					b -= 8;
+					--i;
+				}
+			}
+			r = (r > 255) ? 255 : r;
+			g = (g > 255) ? 255 : g;
+			b = (b > 255) ? 255 : b;
+			SDL_SetRenderDrawColor(renderer, r, g, b, 255);
 			SDL_RenderDrawPoint(renderer, x, y);
 		}
 	}
@@ -67,12 +145,7 @@ void update_pixels(pixel *pixels)
 	{
 		for (int y = 0; y != SIZE; ++y)
 		{
-			if (pixels[x + (y * SIZE)].type == AIR && y - 1 > 1 && pixels[x + ((y - 1) * SIZE)].type == SAND && pixels[x + ((y + 1) * SIZE)].type != AIR)
-			{
-				pixels[x + (y * SIZE)].type = SAND;
-				pixels[x + ((y - 1) * SIZE)].type = AIR;
-			}
-			else if (pixels[x + (y * SIZE)].type == WATER && !complete[x + (y * SIZE)])
+			if (pixels[x + (y * SIZE)].type == WATER && !complete[x + (y * SIZE)])
 			{
 				if (y + 1 < SIZE - 1)
 				{
@@ -190,6 +263,73 @@ void update_pixels(pixel *pixels)
 					complete[x + (y * SIZE)] = 1;
 				}
 			}
+			else if (pixels[x + (y * SIZE)].type == GLOWINGSTUFF && !complete[x + (y * SIZE)])
+			{
+				if (y + 3 < SIZE - 3)
+				{
+					if (pixels[x + ((y + 3) * SIZE)].type == AIR)
+					{
+						pixels[x + ((y + 3) * SIZE)].type = GLOWINGSTUFF;
+						pixels[x + ((y)*SIZE)].type = AIR;
+						complete[x + ((y + 3) * SIZE)] = 1;
+					}
+					else if (pixels[x + ((y + 1) * SIZE)].type == WATER)
+					{
+						pixels[x + ((y + 1) * SIZE)].type = GLOWINGSTUFF;
+						pixels[x + ((y)*SIZE)].type = WATER;
+						complete[x + ((y + 1) * SIZE)] = 1;
+					}
+					else
+					{
+						if (x + 1 < SIZE - 1 && x - 1 > 0)
+						{
+							if (pixels[(x + 1) + ((y + 1) * SIZE)].type == AIR && pixels[(x - 1) + ((y + 1) * SIZE)].type == AIR)
+							{
+								if (randInRange(0, 10000) > 5000)
+								{
+									pixels[(x + 2) + ((y + 1) * SIZE)].type = GLOWINGSTUFF;
+									complete[(x + 1) + ((y + 1) * SIZE)] = 1;
+									pixels[x + (y * SIZE)].type = AIR;
+								}
+								else
+								{
+									pixels[(x - 2) + ((y + 1) * SIZE)].type = GLOWINGSTUFF;
+									complete[(x - 1) + ((y + 1) * SIZE)] = 1;
+									pixels[x + (y * SIZE)].type = AIR;
+								}
+							}
+							else if (pixels[(x + 1) + ((y + 1) * SIZE)].type == AIR)
+							{
+								pixels[(x + 1) + ((y + 1) * SIZE)].type = GLOWINGSTUFF;
+								complete[(x + 1) + ((y + 1) * SIZE)] = 1;
+								pixels[x + (y * SIZE)].type = AIR;
+							}
+							else if (pixels[(x - 1) + ((y + 1) * SIZE)].type == AIR)
+							{
+								pixels[(x - 1) + ((y + 1) * SIZE)].type = GLOWINGSTUFF;
+								complete[(x - 1) + ((y + 1) * SIZE)] = 1;
+								pixels[x + (y * SIZE)].type = AIR;
+							}
+							if (pixels[(x + 1) + ((y + 1) * SIZE)].type == WATER)
+							{
+								pixels[(x + 1) + ((y + 1) * SIZE)].type = GLOWINGSTUFF;
+								complete[(x + 1) + ((y + 1) * SIZE)] = 1;
+								pixels[x + (y * SIZE)].type = WATER;
+							}
+							else if (pixels[(x - 1) + ((y + 1) * SIZE)].type == WATER)
+							{
+								pixels[(x - 1) + ((y + 1) * SIZE)].type = GLOWINGSTUFF;
+								complete[(x - 1) + ((y + 1) * SIZE)] = 1;
+								pixels[x + (y * SIZE)].type = WATER;
+							}
+						}
+					}
+				}
+				else
+				{
+					complete[x + (y * SIZE)] = 1;
+				}
+			}
 		}
 	}
 }
@@ -232,6 +372,10 @@ int main()
 				else if (ev.key.keysym.sym == SDLK_w)
 				{
 					cursor_type = WATER;
+				}
+				else if (ev.key.keysym.sym == SDLK_l)
+				{
+					cursor_type = GLOWINGSTUFF;
 				}
 				else if (ev.key.keysym.sym == SDLK_c)
 				{
