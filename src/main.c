@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <time.h>
 
-#define SIZE 300
+#define SIZE 500
 
 typedef struct
 {
@@ -64,14 +64,14 @@ void draw_pixels(SDL_Renderer *renderer, pixel *pixels)
 				g = 80;
 				b = 0;
 			}
-			if (y >= 1 && pixels[x + (y * SIZE)].type != GLOWINGSTUFF && pixels[x + (y * SIZE)].type != AIR)
+			if (y > 1 && pixels[x + (y * SIZE)].type != GLOWINGSTUFF && pixels[x + (y * SIZE)].type != AIR)
 			{
 				r += 120;
 				g += 120;
 				b += 120;
 				int start_y = y;
 				int i = start_y;
-				while (i >= 1 && i > (start_y - 15) && pixels[x + (i * SIZE)].type != GLOWINGSTUFF)
+				while (i > 1 && i > (start_y - 15) && pixels[x + (i * SIZE)].type != GLOWINGSTUFF)
 				{
 					r -= 8;
 					g -= 8;
@@ -79,14 +79,14 @@ void draw_pixels(SDL_Renderer *renderer, pixel *pixels)
 					--i;
 				}
 			}
-			if (y <= SIZE && pixels[x + (y * SIZE)].type != GLOWINGSTUFF && pixels[x + (y * SIZE)].type != AIR)
+			if (y < SIZE && pixels[x + (y * SIZE)].type != GLOWINGSTUFF && pixels[x + (y * SIZE)].type != AIR)
 			{
 				r += 120;
 				g += 120;
 				b += 120;
 				int start_y = y;
 				int i = start_y;
-				while (i <= SIZE && i < (start_y + 15) && pixels[x + (i * SIZE)].type != GLOWINGSTUFF)
+				while (i < SIZE && i < (start_y + 15) && pixels[x + (i * SIZE)].type != GLOWINGSTUFF)
 				{
 					r -= 8;
 					g -= 8;
@@ -94,14 +94,14 @@ void draw_pixels(SDL_Renderer *renderer, pixel *pixels)
 					++i;
 				}
 			}
-			if (x <= SIZE && pixels[x + (y * SIZE)].type != GLOWINGSTUFF && pixels[x + (y * SIZE)].type != AIR)
+			if (x < SIZE && pixels[x + (y * SIZE)].type != GLOWINGSTUFF && pixels[x + (y * SIZE)].type != AIR)
 			{
 				r += 120;
 				g += 120;
 				b += 120;
 				int start_x = x;
 				int i = start_x;
-				while (i <= SIZE && i < (start_x + 15) && pixels[i + (y * SIZE)].type != GLOWINGSTUFF)
+				while (i < SIZE && i < (start_x + 15) && pixels[i + (y * SIZE)].type != GLOWINGSTUFF)
 				{
 					r -= 8;
 					g -= 8;
@@ -109,7 +109,7 @@ void draw_pixels(SDL_Renderer *renderer, pixel *pixels)
 					++i;
 				}
 			}
-			if (x >= 1 && pixels[x + (y * SIZE)].type != GLOWINGSTUFF && pixels[x + (y * SIZE)].type != AIR)
+			if (x > 1 && pixels[x + (y * SIZE)].type != GLOWINGSTUFF && pixels[x + (y * SIZE)].type != AIR)
 			{
 				r += 120;
 				g += 120;
@@ -122,6 +122,78 @@ void draw_pixels(SDL_Renderer *renderer, pixel *pixels)
 					g -= 8;
 					b -= 8;
 					--i;
+				}
+			}
+			if (x < SIZE && y < SIZE && pixels[x + (y * SIZE)].type != GLOWINGSTUFF && pixels[x + (y * SIZE)].type != AIR)
+			{
+				r += 120;
+				g += 120;
+				b += 120;
+				int i = 0;
+				int x1 = x;
+				int y1 = y;
+				while (x1 < SIZE && y1 < SIZE && i < 10 && pixels[x1 + (y1 * SIZE)].type != GLOWINGSTUFF)
+				{
+					++y1;
+					++x1;
+					r -= 12;
+					g -= 12;
+					b -= 12;
+					++i;
+				}
+			}
+			if (x > 1 && y > 1 && pixels[x + (y * SIZE)].type != GLOWINGSTUFF && pixels[x + (y * SIZE)].type != AIR)
+			{
+				r += 120;
+				g += 120;
+				b += 120;
+				int i = 0;
+				int x1 = x;
+				int y1 = y;
+				while (x1 > 1 && y1 > 1 && i < 10 && pixels[x1 + (y1 * SIZE)].type != GLOWINGSTUFF)
+				{
+					--y1;
+					--x1;
+					r -= 12;
+					g -= 12;
+					b -= 12;
+					++i;
+				}
+			}
+			if (x > 1 && y < SIZE && pixels[x + (y * SIZE)].type != GLOWINGSTUFF && pixels[x + (y * SIZE)].type != AIR)
+			{
+				r += 120;
+				g += 120;
+				b += 120;
+				int i = 0;
+				int x1 = x;
+				int y1 = y;
+				while (x1 > 1 && y1 < SIZE && i < 10 && pixels[x1 + (y1 * SIZE)].type != GLOWINGSTUFF)
+				{
+					++y1;
+					--x1;
+					r -= 12;
+					g -= 12;
+					b -= 12;
+					++i;
+				}
+			}
+			if (x < SIZE && y > 1 && pixels[x + (y * SIZE)].type != GLOWINGSTUFF && pixels[x + (y * SIZE)].type != AIR)
+			{
+				r += 120;
+				g += 120;
+				b += 120;
+				int i = 0;
+				int x1 = x;
+				int y1 = y;
+				while (x1 < SIZE && y1 > 1 && i < 10 && pixels[x1 + (y1 * SIZE)].type != GLOWINGSTUFF)
+				{
+					--y1;
+					++x1;
+					r -= 12;
+					g -= 12;
+					b -= 12;
+					++i;
 				}
 			}
 			r = (r > 255) ? 255 : r;
@@ -145,189 +217,209 @@ void update_pixels(pixel *pixels)
 	{
 		for (int y = 0; y != SIZE; ++y)
 		{
-			if (pixels[x + (y * SIZE)].type == WATER && !complete[x + (y * SIZE)])
+			if (!complete[x + (y * SIZE)])
 			{
-				if (y + 1 < SIZE - 1)
+				switch (pixels[x + (y * SIZE)].type)
 				{
-					if (pixels[x + ((y + 2) * SIZE)].type == AIR)
-					{
-						pixels[x + ((y + 2) * SIZE)].type = WATER;
-						pixels[x + ((y)*SIZE)].type = AIR;
-						complete[x + ((y + 2) * SIZE)] = 1;
-					}
-					else
-					{
-						if (x + 2 < SIZE - 1 && x - 2 > 0)
-						{
-							if (pixels[(x + 1) + ((y + 1) * SIZE)].type == AIR)
-							{
-								pixels[(x + 1) + ((y + 1) * SIZE)].type = WATER;
-								complete[(x + 1) + ((y + 1) * SIZE)] = 1;
-								pixels[x + (y * SIZE)].type = AIR;
-							}
-							else if (pixels[(x - 1) + ((y + 1) * SIZE)].type == AIR)
-							{
-								pixels[(x - 1) + ((y + 1) * SIZE)].type = WATER;
-								complete[(x - 1) + ((y + 1) * SIZE)] = 1;
-								pixels[x + (y * SIZE)].type = AIR;
-							}
-							else
-							{
-								if (randInRange(0, 1000) > SIZE)
-								{
-									if (pixels[(x - 8) + (y * SIZE)].type == AIR)
-									{
-										pixels[(x - 8) + (y * SIZE)].type = WATER;
-										pixels[x + (y * SIZE)].type = AIR;
-										complete[x + (y * SIZE)] = 1;
-									}
-								}
-								else
-								{
-									if (pixels[(x + 8) + (y * SIZE)].type == AIR)
-									{
-										pixels[(x + 8) + (y * SIZE)].type = WATER;
-										pixels[x + (y * SIZE)].type = AIR;
-										complete[x + (y * SIZE)] = 1;
-									}
-								}
-							}
-						}
-					}
+				case AIR:
+				{
+					continue;
 				}
-			}
-			else if (pixels[x + (y * SIZE)].type == SAND && !complete[x + (y * SIZE)])
-			{
-				if (y + 3 < SIZE - 3)
+				break;
+				case WATER:
 				{
-					if (pixels[x + ((y + 3) * SIZE)].type == AIR)
+					if (y + 1 < SIZE - 1)
 					{
-						pixels[x + ((y + 3) * SIZE)].type = SAND;
-						pixels[x + ((y)*SIZE)].type = AIR;
-						complete[x + ((y + 3) * SIZE)] = 1;
-					}
-					else if (pixels[x + ((y + 1) * SIZE)].type == WATER)
-					{
-						pixels[x + ((y + 1) * SIZE)].type = SAND;
-						pixels[x + ((y)*SIZE)].type = WATER;
-						complete[x + ((y + 1) * SIZE)] = 1;
-					}
-					else
-					{
-						if (x + 1 < SIZE - 1 && x - 1 > 0)
+						if (pixels[x + ((y + 2) * SIZE)].type == AIR)
 						{
-							if (pixels[(x + 1) + ((y + 1) * SIZE)].type == AIR && pixels[(x - 1) + ((y + 1) * SIZE)].type == AIR)
+							pixels[x + ((y + 2) * SIZE)].type = WATER;
+							pixels[x + ((y)*SIZE)].type = AIR;
+							complete[x + ((y + 2) * SIZE)] = 1;
+						}
+						else
+						{
+							if (x + 2 < SIZE - 1 && x - 2 > 0)
 							{
-								if (randInRange(0, 10000) > 5000)
+								if (pixels[(x + 1) + ((y + 1) * SIZE)].type == AIR)
 								{
-									pixels[(x + 2) + ((y + 1) * SIZE)].type = SAND;
+									pixels[(x + 1) + ((y + 1) * SIZE)].type = WATER;
 									complete[(x + 1) + ((y + 1) * SIZE)] = 1;
 									pixels[x + (y * SIZE)].type = AIR;
 								}
-								else
+								else if (pixels[(x - 1) + ((y + 1) * SIZE)].type == AIR)
 								{
-									pixels[(x - 2) + ((y + 1) * SIZE)].type = SAND;
+									pixels[(x - 1) + ((y + 1) * SIZE)].type = WATER;
 									complete[(x - 1) + ((y + 1) * SIZE)] = 1;
 									pixels[x + (y * SIZE)].type = AIR;
 								}
-							}
-							else if (pixels[(x + 1) + ((y + 1) * SIZE)].type == AIR)
-							{
-								pixels[(x + 1) + ((y + 1) * SIZE)].type = SAND;
-								complete[(x + 1) + ((y + 1) * SIZE)] = 1;
-								pixels[x + (y * SIZE)].type = AIR;
-							}
-							else if (pixels[(x - 1) + ((y + 1) * SIZE)].type == AIR)
-							{
-								pixels[(x - 1) + ((y + 1) * SIZE)].type = SAND;
-								complete[(x - 1) + ((y + 1) * SIZE)] = 1;
-								pixels[x + (y * SIZE)].type = AIR;
-							}
-							if (pixels[(x + 1) + ((y + 1) * SIZE)].type == WATER)
-							{
-								pixels[(x + 1) + ((y + 1) * SIZE)].type = SAND;
-								complete[(x + 1) + ((y + 1) * SIZE)] = 1;
-								pixels[x + (y * SIZE)].type = WATER;
-							}
-							else if (pixels[(x - 1) + ((y + 1) * SIZE)].type == WATER)
-							{
-								pixels[(x - 1) + ((y + 1) * SIZE)].type = SAND;
-								complete[(x - 1) + ((y + 1) * SIZE)] = 1;
-								pixels[x + (y * SIZE)].type = WATER;
+								else
+								{
+									if (randInRange(0, 1000) > SIZE)
+									{
+										if (pixels[(x - 8) + (y * SIZE)].type == AIR)
+										{
+											pixels[(x - 8) + (y * SIZE)].type = WATER;
+											pixels[x + (y * SIZE)].type = AIR;
+											complete[x + (y * SIZE)] = 1;
+										}
+									}
+									else
+									{
+										if (pixels[(x + 8) + (y * SIZE)].type == AIR)
+										{
+											pixels[(x + 8) + (y * SIZE)].type = WATER;
+											pixels[x + (y * SIZE)].type = AIR;
+											complete[x + (y * SIZE)] = 1;
+										}
+									}
+								}
 							}
 						}
 					}
 				}
-				else
+				break;
+				case SAND:
 				{
-					complete[x + (y * SIZE)] = 1;
-				}
-			}
-			else if (pixels[x + (y * SIZE)].type == GLOWINGSTUFF && !complete[x + (y * SIZE)])
-			{
-				if (y + 3 < SIZE - 3)
-				{
-					if (pixels[x + ((y + 3) * SIZE)].type == AIR)
+					if (y + 3 < SIZE - 3)
 					{
-						pixels[x + ((y + 3) * SIZE)].type = GLOWINGSTUFF;
-						pixels[x + ((y)*SIZE)].type = AIR;
-						complete[x + ((y + 3) * SIZE)] = 1;
-					}
-					else if (pixels[x + ((y + 1) * SIZE)].type == WATER)
-					{
-						pixels[x + ((y + 1) * SIZE)].type = GLOWINGSTUFF;
-						pixels[x + ((y)*SIZE)].type = WATER;
-						complete[x + ((y + 1) * SIZE)] = 1;
-					}
-					else
-					{
-						if (x + 1 < SIZE - 1 && x - 1 > 0)
+						if (pixels[x + ((y + 3) * SIZE)].type == AIR)
 						{
-							if (pixels[(x + 1) + ((y + 1) * SIZE)].type == AIR && pixels[(x - 1) + ((y + 1) * SIZE)].type == AIR)
+							pixels[x + ((y + 3) * SIZE)].type = SAND;
+							pixels[x + ((y)*SIZE)].type = AIR;
+							complete[x + ((y + 3) * SIZE)] = 1;
+						}
+						else if (pixels[x + ((y + 1) * SIZE)].type == WATER)
+						{
+							pixels[x + ((y + 1) * SIZE)].type = SAND;
+							pixels[x + ((y)*SIZE)].type = WATER;
+							complete[x + ((y + 1) * SIZE)] = 1;
+						}
+						else
+						{
+							if (x + 1 < SIZE - 1 && x - 1 > 0)
 							{
-								if (randInRange(0, 10000) > 5000)
+								if (pixels[(x + 1) + ((y + 1) * SIZE)].type == AIR && pixels[(x - 1) + ((y + 1) * SIZE)].type == AIR)
 								{
-									pixels[(x + 2) + ((y + 1) * SIZE)].type = GLOWINGSTUFF;
+									if (randInRange(0, 10000) > 5000)
+									{
+										pixels[(x + 2) + ((y + 1) * SIZE)].type = SAND;
+										complete[(x + 1) + ((y + 1) * SIZE)] = 1;
+										pixels[x + (y * SIZE)].type = AIR;
+									}
+									else
+									{
+										pixels[(x - 2) + ((y + 1) * SIZE)].type = SAND;
+										complete[(x - 1) + ((y + 1) * SIZE)] = 1;
+										pixels[x + (y * SIZE)].type = AIR;
+									}
+								}
+								else if (pixels[(x + 1) + ((y + 1) * SIZE)].type == AIR)
+								{
+									pixels[(x + 1) + ((y + 1) * SIZE)].type = SAND;
 									complete[(x + 1) + ((y + 1) * SIZE)] = 1;
 									pixels[x + (y * SIZE)].type = AIR;
 								}
-								else
+								else if (pixels[(x - 1) + ((y + 1) * SIZE)].type == AIR)
 								{
-									pixels[(x - 2) + ((y + 1) * SIZE)].type = GLOWINGSTUFF;
+									pixels[(x - 1) + ((y + 1) * SIZE)].type = SAND;
 									complete[(x - 1) + ((y + 1) * SIZE)] = 1;
 									pixels[x + (y * SIZE)].type = AIR;
 								}
-							}
-							else if (pixels[(x + 1) + ((y + 1) * SIZE)].type == AIR)
-							{
-								pixels[(x + 1) + ((y + 1) * SIZE)].type = GLOWINGSTUFF;
-								complete[(x + 1) + ((y + 1) * SIZE)] = 1;
-								pixels[x + (y * SIZE)].type = AIR;
-							}
-							else if (pixels[(x - 1) + ((y + 1) * SIZE)].type == AIR)
-							{
-								pixels[(x - 1) + ((y + 1) * SIZE)].type = GLOWINGSTUFF;
-								complete[(x - 1) + ((y + 1) * SIZE)] = 1;
-								pixels[x + (y * SIZE)].type = AIR;
-							}
-							if (pixels[(x + 1) + ((y + 1) * SIZE)].type == WATER)
-							{
-								pixels[(x + 1) + ((y + 1) * SIZE)].type = GLOWINGSTUFF;
-								complete[(x + 1) + ((y + 1) * SIZE)] = 1;
-								pixels[x + (y * SIZE)].type = WATER;
-							}
-							else if (pixels[(x - 1) + ((y + 1) * SIZE)].type == WATER)
-							{
-								pixels[(x - 1) + ((y + 1) * SIZE)].type = GLOWINGSTUFF;
-								complete[(x - 1) + ((y + 1) * SIZE)] = 1;
-								pixels[x + (y * SIZE)].type = WATER;
+								if (pixels[(x + 1) + ((y + 1) * SIZE)].type == WATER)
+								{
+									pixels[(x + 1) + ((y + 1) * SIZE)].type = SAND;
+									complete[(x + 1) + ((y + 1) * SIZE)] = 1;
+									pixels[x + (y * SIZE)].type = WATER;
+								}
+								else if (pixels[(x - 1) + ((y + 1) * SIZE)].type == WATER)
+								{
+									pixels[(x - 1) + ((y + 1) * SIZE)].type = SAND;
+									complete[(x - 1) + ((y + 1) * SIZE)] = 1;
+									pixels[x + (y * SIZE)].type = WATER;
+								}
 							}
 						}
 					}
+					else
+					{
+						complete[x + (y * SIZE)] = 1;
+					}
 				}
-				else
+				break;
+				case GLOWINGSTUFF:
 				{
-					complete[x + (y * SIZE)] = 1;
+					if (y + 3 < SIZE - 3)
+					{
+						if (pixels[x + ((y + 3) * SIZE)].type == AIR)
+						{
+							pixels[x + ((y + 3) * SIZE)].type = GLOWINGSTUFF;
+							pixels[x + ((y)*SIZE)].type = AIR;
+							complete[x + ((y + 3) * SIZE)] = 1;
+						}
+						else if (pixels[x + ((y + 1) * SIZE)].type == WATER)
+						{
+							pixels[x + ((y + 1) * SIZE)].type = GLOWINGSTUFF;
+							pixels[x + ((y)*SIZE)].type = WATER;
+							complete[x + ((y + 1) * SIZE)] = 1;
+						}
+						else
+						{
+							if (x + 1 < SIZE - 1 && x - 1 > 0)
+							{
+								if (pixels[(x + 1) + ((y + 1) * SIZE)].type == AIR && pixels[(x - 1) + ((y + 1) * SIZE)].type == AIR)
+								{
+									if (randInRange(0, 10000) > 5000)
+									{
+										pixels[(x + 2) + ((y + 1) * SIZE)].type = GLOWINGSTUFF;
+										complete[(x + 1) + ((y + 1) * SIZE)] = 1;
+										pixels[x + (y * SIZE)].type = AIR;
+									}
+									else
+									{
+										pixels[(x - 2) + ((y + 1) * SIZE)].type = GLOWINGSTUFF;
+										complete[(x - 1) + ((y + 1) * SIZE)] = 1;
+										pixels[x + (y * SIZE)].type = AIR;
+									}
+								}
+								else if (pixels[(x + 1) + ((y + 1) * SIZE)].type == AIR)
+								{
+									pixels[(x + 1) + ((y + 1) * SIZE)].type = GLOWINGSTUFF;
+									complete[(x + 1) + ((y + 1) * SIZE)] = 1;
+									pixels[x + (y * SIZE)].type = AIR;
+								}
+								else if (pixels[(x - 1) + ((y + 1) * SIZE)].type == AIR)
+								{
+									pixels[(x - 1) + ((y + 1) * SIZE)].type = GLOWINGSTUFF;
+									complete[(x - 1) + ((y + 1) * SIZE)] = 1;
+									pixels[x + (y * SIZE)].type = AIR;
+								}
+								if (pixels[(x + 1) + ((y + 1) * SIZE)].type == WATER)
+								{
+									if (randInRange(1, 10000) > 9000)
+									{
+										pixels[(x + 1) + ((y + 1) * SIZE)].type = GLOWINGSTUFF;
+										complete[(x + 1) + ((y + 1) * SIZE)] = 1;
+										pixels[x + (y * SIZE)].type = WATER;
+									}
+								}
+								else if (pixels[(x - 1) + ((y + 1) * SIZE)].type == WATER)
+								{
+									if (randInRange(1, 10000) > 9000)
+									{
+										pixels[(x - 1) + ((y + 1) * SIZE)].type = GLOWINGSTUFF;
+										complete[(x - 1) + ((y + 1) * SIZE)] = 1;
+										pixels[x + (y * SIZE)].type = WATER;
+									}
+								}
+							}
+						}
+					}
+					else
+					{
+						complete[x + (y * SIZE)] = 1;
+					}
+				}
+				break;
 				}
 			}
 		}
